@@ -191,6 +191,7 @@ function calculate() {
 
   let stateVal = Data[projectZipCode]["state"];
   let distanceVal = iterateToSeek(Data[projectZipCode]["state"], "Dist to Bakersfield CA", "state");
+  console.log(distanceVal);
   let nonMilkingVal = animalCount * 0.15;
   let resultArray = [stateVal, distanceVal, nonMilkingVal];
   updateUI(resultArray);
@@ -211,7 +212,8 @@ function calculatePreBcsMethane() {
 
   let volatileSolid = (2050.54 * animalCount + 1111.25 * nonMilkingVal) * preBCS;
   let convertedVolatile = volatileSolid * 2.2046226218;
-  let volatileSolidDegraded = volatileSolid * Data["83128"]["Manure Degredation Factor"] * 1;
+  let volatileSolidDegraded = volatileSolid *  iterateToSeek(Data[projectZipCode]["state"],'Manure Degredation Factor','state')
+  * 1;
   let convertedVolatileSolidDegraded = volatileSolidDegraded * 2.2046226218;
   let baselineMethaneEmission = volatileSolidDegraded * 0.000163;
 
@@ -467,6 +469,7 @@ function formateNumber(val) {
   if (!isFinite(val)) return 0;
   return numberWithCommas(Math.round(val));
 }
+
 function numberWithCommas(x) {
   return x.toString().split(".")[0].length > 3
     ? x
