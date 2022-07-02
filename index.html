@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+      integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tw-elements/dist/css/index.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css" />
+
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="wrapper__calc">
+      <section class="section__calc section__first">
+        <h2 class="section__heading">Farm Location</h2>
+        <div class="col__calc">
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label class="label__calc"> Project zip code </label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="This is based on the provided zip code."
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <div class="icon-container">
+                <i class="loader" id="loader"></i>
+                <i class="fas fa-check-circle" id="tick"></i>
+                <i class="fa-solid fa-circle-xmark" id="close"></i>
+              </div>
+              <input
+                type="text"
+                class="input__calc"
+                id="projectZipCode"
+                onchange="checkZipCodeInDataBase()"
+                oninput="zipCodeInputAnimation()"
+              />
+            </div>
+            <span class="error" id="projectZipCodeError">Please enter valid zip code</span>
+          </div>
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label class="label__calc">State</label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="This is based on the centroid of the state found from the provided zip code"
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <input type="text" class="input__calc" disabled id="state" />
+            </div>
+          </div>
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label
+                class="label__calc underlined__text"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="Projects located out of CA require delivery to Bakersfield, which requires energy and pipeline loss, these losses impact the overall CI Score"
+              >
+                Distance to Bakersfield, CA
+              </label>
+
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="This is based on the centroid of the state found from the provided zip code"
+              ></i>
+            </div>
+
+            <div class="combined__calc">
+              <input type="text" class="input__calc" disabled id="distance" />
+              <span
+                class="unit__calc underlined__text"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="Miles"
+                >mi(s)</span
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="section__calc section__second">
+        <h2 class="section__heading">Animal Counts</h2>
+        <div class="col__calc">
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label class="label__calc">Head count dairy cows on feed</label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="It is assumed that these cows spend their lives at the dairy barns and milking parlor, feed is brought to them, their wastes are gathered and brought to a lagoon."
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <input type="text" class="input__calc" id="animalCount" oninput="calculate()" />
+              <span class="unit__calc blackColor">ea</span>
+            </div>
+          </div>
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label class="label__calc"
+                >Head count <span class="small__label"> non-milking</span> dairy cows on feed
+              </label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="This tool assumes that non-milking (dry) cows will make up 15% of the population (which is typical)."
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <input type="text" class="input__calc" id="non-milkingAnimalCount" disabled />
+              <span class="unit__calc">ea</span>
+            </div>
+          </div>
+          <div class="row__calc responsive__none">
+            <label class="label__calc">&nbsp; </label>
+            <div class="combined__calc">&nbsp;</div>
+          </div>
+        </div>
+      </section>
+      <section class="section__calc section__third">
+        <h2 class="section__heading">Pre BCS Methane Released</h2>
+        <div class="col__calc">
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label
+                class="label__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="Pre Biological Control System (in other words, before the anaerobic digestor is installed)"
+                >Pre-BCS volatile solids sent to lagoon
+              </label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="Typically 100%, exceptions being animals who spend some portion of time in areas where there manure is not collected or where manure was processed to recover biosolids for bedding."
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <input type="text" class="input__calc" id="preBCS" oninput="calculate()" />
+              <span
+                class="unit__calc blackColor underlined__text"
+                data-bs-toggle="tooltip"
+                title="Percentage"
+                >%</span
+              >
+            </div>
+          </div>
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label
+                class="label__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="Lagoon cleanouts are not the annual maintenance of levels (typically performed in spring and fall) but instead are more rigorous activities typically including specialized equipment to regain lagoon capacity.  These events significantly reduce the amount of volatile solids within the lagoon and thus significantly impact the CI Score."
+                >Assumed lagoon cleanouts per year
+              </label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="This free tool is limited to an assumption of 1 here, this is likely conservative."
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <input type="text" class="input__calc" id="assumedLagoon" value="1" disabled />
+              <span
+                class="unit__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="Number of clean-outs per year"
+                >Count</span
+              >
+            </div>
+          </div>
+
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label class="label__calc"
+                >Volatile solids degraded <br class="line__break" />
+                <br class="line__break" />
+              </label>
+              <!-- <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="This tool assumes that non-milking (dry) cows will make up 15% of the population (which is typical)."
+              ></i> -->
+            </div>
+            <div class="combined__calc">
+              <input type="text" class="input__calc" id="volatileSolidDegraded" disabled />
+              <span
+                class="unit__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="Kilogram Per Year"
+                >kg/Yr</span
+              >
+            </div>
+          </div>
+
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label
+                class="label__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="Calculated emissions from the farms lagoon prior to installation of an AD system."
+                >Baseline methane emissions
+              </label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="Methane is assumed to have a global warming potential of 25 times that of CO2, capturing this methane and ensuring that it is oxidized back to CO2 thus is expected to have a significant beneficial environmental impact."
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <input type="text" class="input__calc" id="baselineMethaneEmission" disabled />
+              <span
+                class="unit__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="Metric Tons [1000 kg] of methane per year"
+                >MT CH4/Yr</span
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+      <!--  -->
+      <section class="section__calc section__fourth">
+        <h2 class="section__heading">Post BCS Manure Yield</h2>
+        <div class="col__calc">
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label
+                class="label__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="This is the estimated manure production per lactating cow (note this is not in terms of animal units)."
+                >Manure per dairy cow - on feed
+              </label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="Typically wet cows require significant calories to produce their milk.  Generally we see a range of 25 and 32 gallons of manure per wet cow per day."
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <input type="text" class="input__calc" id="manurePerDiaryCow" oninput="calculate()" />
+              <span
+                class="unit__calc blackColor underlined__text"
+                data-bs-toggle="tooltip"
+                title="Gallons per day per animal"
+                >gpd/animal</span
+              >
+            </div>
+          </div>
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label
+                class="label__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="This is the estimated manure production per non-lactating (or dry) cow (note this is not in terms of animal units)."
+                >Manure per <span class="small__label">non-milking</span> dairy cows - on feed
+              </label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="Typically dry cows require less calories per day, thus eating and excreting less.  Generally we see a range of 13 to 25 gallons of manure per dry cow per day."
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <input
+                type="text"
+                class="input__calc"
+                id="manurePerNonMilkingCow"
+                oninput="calculate()"
+              />
+              <span
+                class="unit__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="Gallons per day per animal"
+                >gpd/animal</span
+              >
+            </div>
+          </div>
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label
+                class="label__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="Post Biological Control System (in other words, after the anaerobic digestor is installed)"
+                >Post-BCS manure sent to digester
+              </label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="Typically 100%, exceptions being some dairies in cold climates will dry stack frozen manure during extended freezing conditions, or perhaps other operational maters that prevent some portion of the manure from going to the digestor."
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <input type="text" class="input__calc" id="postBcsManure" oninput="calculate()" />
+              <span class="unit__calc underlined__text" data-bs-toggle="tooltip" title="Percentage"
+                >%</span
+              >
+            </div>
+          </div>
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label
+                class="label__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="This is the total expected number of gallons of manure which will be sent to the Biological Control System (Anerobic Digestor) each day."
+                >Volume of manure sent to BCS daily
+              </label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="This is a calculated value based on animal count, manure per animal and percentage sent to the digestor."
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <input type="text" class="input__calc" id="volumeOfManureSent" disabled />
+              <span
+                class="unit__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="Gallons per day"
+                >gpd</span
+              >
+            </div>
+          </div>
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label class="label__calc">Gallons to pounds conversion for manure </label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="This is the density of manure for your project, typically 8 - 9 pounds per gallon."
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <input type="text" class="input__calc" id="gtpcfm" oninput="calculate()" />
+              <span
+                class="unit__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="Pounds per gallon"
+                >ppg</span
+              >
+            </div>
+          </div>
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label
+                class="label__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="Manure daily quantity expressed in pounds per day which is sent to the digestor"
+                >Manure daily quantity
+              </label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="Calculated based on volume of manure sent to BCS daily and the pounds per gallon conversion factor."
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <input type="text" class="input__calc" id="manureDailyQuantity" disabled />
+              <span
+                class="unit__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="Pounds of manure per day"
+                >ppd</span
+              >
+            </div>
+          </div>
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label
+                class="label__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="Total Solids are typically found by having representative manure samples analyzed, and represent the percentage of the volume which is solid (not liquid).  These solids are composed of both volatile and non-volatile components, non-volatile components are for instance sand and salt."
+                >Total solids
+              </label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="Typical range for Total solids is 8% to 30%."
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <input type="text" class="input__calc" id="totalSolid" oninput="calculate()" />
+              <span class="unit__calc underlined__text" data-bs-toggle="tooltip" title="Percentage"
+                >%</span
+              >
+            </div>
+          </div>
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label
+                class="label__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="Volatile Solids are expressed as a percentage of Total Solids, so an 80% value would indicate that 80% of the Total Solids are in fact volatile."
+                >Volatile solids (as a percentage of total solids)
+              </label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="Typical range is 40% to 85%"
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <input
+                type="text"
+                class="input__calc"
+                id="volatileSolidAsPercentage"
+                oninput="calculate()"
+              />
+              <span class="unit__calc underlined__text" data-bs-toggle="tooltip" title="Percentage"
+                >%</span
+              >
+            </div>
+          </div>
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label class="label__calc underlined__text">Daily total solids </label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="Calculated based on the Total solids (percentage) multiplied by the Manure daily quantity."
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <input type="text" class="input__calc" id="dailyTotalSolid" disabled />
+              <span
+                class="unit__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="Pounds of total solids per day"
+                >ppd</span
+              >
+            </div>
+          </div>
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label
+                class="label__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="The number of pounds per day of volatile solids that will be sent to the Anaerobic Digestor."
+                >Daily volatile solids
+              </label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="Calculated based on the Daily total solids multiplied by the Daily volatile solids."
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <input type="text" class="input__calc" id="dailyVolatileSolid" disabled />
+              <span
+                class="unit__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="Pounds of volatile solids per day"
+                >ppd</span
+              >
+            </div>
+          </div>
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label
+                class="label__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="Digestor temperature, retention time and mixing effectiveness will influence how much of the volatile solids that are available in the digestor will actually be converted to Methane and CO2.  This is expressed as a percentage of volatile solids available which are actually decomposed."
+                >Assumed volatile solids destruction rate
+              </label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="Typical range is 40% to 60%."
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <input
+                type="text"
+                class="input__calc"
+                id="assumedVolatileSolidDes"
+                oninput="calculate()"
+              />
+              <span
+                class="unit__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="Percentage of available volatile solids which are expected to degrade in the digestor."
+                >%</span
+              >
+            </div>
+          </div>
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label
+                class="label__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="The quantity (pounds) of volatile solids which are to be decomposed into CO2 and methane each day."
+                >Volatile solids destructed per day
+              </label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="Calculated based on Assumed volatile solids destruction rate and daily volatile solids."
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <input type="text" class="input__calc" id="volatileSolidDesPerDay" disabled />
+              <span
+                class="unit__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="Pounds per day"
+                >ppd</span
+              >
+            </div>
+          </div>
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label
+                class="label__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="Expected biogas volume (standard cubic feet) per pound of volatile solid destructed."
+                >Biogas yield
+              </label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="Typical range is 9 to 15 standard cubic feet of biogas produced for each pound of volatile solid destroyed."
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <input type="text" class="input__calc" id="biogasYield" oninput="calculate()" />
+              <span
+                class="unit__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="Standard cubic feet of biogas created per pound of volatile solid destroyed."
+                >scf/lb VS</span
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="section__calc section__fifth">
+        <h2 class="section__heading">Biogas Yield</h2>
+        <div class="col__calc">
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label
+                class="label__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="This is how much biogas (biogas is the unprocessed H2S, CO2 and methane that comes from the digestor) is expected on a per day basis."
+                >Biogas daily quantity
+              </label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="This calculation is based on the volatile solids destructed per day and the biogas daily quantity."
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <input type="text" class="input__calc" id="biogasDailyQuantity" disabled />
+              <span
+                class="unit__calc blackColor underlined__text"
+                data-bs-toggle="tooltip"
+                title="Standard cubic feet per day"
+                >scfd</span
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="section__calc section__sixth0">
+        <h2 class="section__heading">RNG Yield</h2>
+        <div class="col__calc">
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label
+                class="label__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="This is the percentage of methane that is expected in the raw biogas."
+                >Biogas methane content
+              </label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="Typically this is 58% to 60%."
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <input
+                type="text"
+                class="input__calc"
+                id="biogasMethaneContent"
+                oninput="calculate()"
+              />
+              <span
+                class="unit__calc blackColor underlined__text"
+                data-bs-toggle="tooltip"
+                title="Percentage"
+                >%</span
+              >
+            </div>
+          </div>
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label
+                class="label__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="The upgrader will remove most of CO2 from the processed gas, but some CO2 will remain in the processed gas.  This is the measurement of the percentage of CO2 which will remain in the process stream."
+                >Upgrading effectiveness
+              </label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="Typically this is 95% to 99%."
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <input
+                type="text"
+                class="input__calc"
+                id="upgradingEffectiveness"
+                oninput="calculate()"
+              />
+              <span
+                class="unit__calc blackColor underlined__text"
+                data-bs-toggle="tooltip"
+                title="Percentage"
+                >%</span
+              >
+            </div>
+          </div>
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label
+                class="label__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="While the upgrader is removing CO2, some methane will escape with that CO2, this is a measure of the percent of methane that will escape with the CO2 (tail gas).  Note that it is assumed that this tail gas stream is sent to a control device such as a thermal oxidizer to combust any methane within this stream."
+                >Methane lost as tail gas (assumed sent to control device)
+              </label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="Typically this is 1% to 5%."
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <input type="text" class="input__calc" id="methaneLostAsTail" oninput="calculate()" />
+              <span
+                class="unit__calc blackColor underlined__text"
+                data-bs-toggle="tooltip"
+                title="Percentage"
+                >%</span
+              >
+            </div>
+          </div>
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label
+                class="label__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="Once the Biogas is upgraded to meet pipeline specification, it is known as Renewable Natural Gas (RNG), This is the daily quantity of RNG expected."
+                >RNG daily quantity
+              </label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="Calculated based on Biogas daily quantity, Biogas methane content, Upgrading effectiveness, and Methane lost as tail gas."
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <input
+                type="text"
+                class="input__calc"
+                id="rngDailyQuantity"
+                oninput="calculate()"
+                disabled
+              />
+              <span
+                class="unit__calc blackColor underlined__text"
+                data-bs-toggle="tooltip"
+                title="Standard cubic feet of Renewable Natural Gas produced per day"
+                >scfd</span
+              >
+            </div>
+          </div>
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label
+                class="label__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="Renewable Natural Gas is typically sold on an energy basis."
+                >RNG daily energy
+              </label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="This calculated value is based on RNG daily quantity and Upgrading effectiveness (since RNG daily quantity had residual CO2 that will not add energy)."
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <input
+                type="text"
+                class="input__calc"
+                id="rngDailyEnergy"
+                oninput="calculate()"
+                disabled
+              />
+              <span
+                class="unit__calc blackColor underlined__text"
+                data-bs-toggle="tooltip"
+                title="Renewable Natural Gas produced in dekatherm [1 MMBTU] per day"
+                >Dth/day</span
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="section__calc section__sixth">
+        <h2 class="section__heading">Energy Usage and Methane Loss Offsets</h2>
+        <div class="col__calc">
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label
+                class="label__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="eGrid provides information about the carbon intensity of each electrical grid in the continental US."
+                >Electric grid (eGrid)
+              </label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="Using eGrid data for the specified zip code."
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <input type="text" class="input__calc" id="electricGrid" disabled />
+            </div>
+          </div>
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label
+                class="label__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="Our commercial version more accurately accounts for energy usage based on equipment selection and climate information.  Enter the amount of heat that will be required to create each dekatherm of RNG."
+                >Fuel gas energy required vs RNG energy produced
+              </label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="Typically assumed to be 0.15 to 0.25 dekatherm of purchased fuel per dekatherm of RNG produced.  Most of this energy is used to heat manure and keep the digester warm, thus colder climates in general have a higher value than warmer climates."
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <input type="text" class="input__calc" id="fuelGasEnergy" oninput="calculate()" />
+              <span
+                class="unit__calc blackColor underlined__text"
+                data-bs-toggle="tooltip"
+                title="Dekatherm [1 MMBTU] of energy required to create each dekatherm of RNG"
+                >Dth / RNG Dth</span
+              >
+            </div>
+          </div>
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label
+                class="label__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="Calculated fuel used (natural gas or propane) to create RNG annually."
+                >Fuel gas energy used annually
+              </label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="Calculated based on Fuel gas energy required vs. RNG energy produced and RNG daily energy then converted to an annual number."
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <input type="text" class="input__calc" id="fuelGasEnergyAnam" disabled />
+              <span
+                class="unit__calc blackColor underlined__text"
+                data-bs-toggle="tooltip"
+                title="Dekatherm [1 MMBTU] per year"
+                >Dth/Yr</span
+              >
+            </div>
+          </div>
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label
+                class="label__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="Our commercial version more accurately accounts for energy usage based on equipment selection and climate information.  Enter the amount of electricity that will be required to create each dekatherm of RNG."
+                >Grid electricity purchased vs RNG energy produced
+              </label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="Typically assumed to be 20 to 30 kWh of electricity per RNG dekatherm."
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <input
+                type="text"
+                class="input__calc"
+                id="gridElectricityPurchased"
+                oninput="calculate()"
+              />
+              <span
+                class="unit__calc blackColor underlined__text"
+                data-bs-toggle="tooltip"
+                title="kWh of electricity required to create each dekatherm of RNG"
+                >kWh / RNG Dth</span
+              >
+            </div>
+          </div>
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label
+                class="label__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="Calculated electricity used to create RNG annually."
+                >Calculated grid electricity usage
+              </label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="Calculated based on Grid electricity purchased vs. RNG energy produced and RNG daily energy then converted to an annual number."
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <input type="text" class="input__calc" id="calculatedGridElectricityUsage" disabled />
+              <span
+                class="unit__calc blackColor underlined__text"
+                data-bs-toggle="tooltip"
+                title="Kilowatts required per hour per year"
+                >kWh/Yr</span
+              >
+            </div>
+          </div>
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label class="label__calc" data-bs-toggle="tooltip"
+                >Calculated grid electricity usage
+              </label>
+            </div>
+            <div class="combined__calc">
+              <input
+                type="text"
+                class="input__calc"
+                id="calculatedGridElectricityUsage1"
+                disabled
+              />
+              <span
+                class="unit__calc blackColor underlined__text"
+                data-bs-toggle="tooltip"
+                title="Metric ton [1000 kg] of CO2 equivalent per year"
+                >MT CO2e/Yr</span
+              >
+            </div>
+          </div>
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label
+                class="label__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="An enclosed vessel has an assumed 98% capture rate."
+                >Digester type
+              </label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="This free tool is limited to an assumption of Enclosed Vessel here."
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <input
+                type="text"
+                class="input__calc"
+                id="digesterType"
+                disabled
+                value="Enclosed Vessel"
+              />
+            </div>
+          </div>
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label
+                class="label__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="After the anaerobic digestor is in place, this percent of the digestate from the digestor will go to the lagoon."
+                >Post-BCS digestate sent to lagoon
+              </label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="This free tool is limited to an assumption of 100% (which is typical)."
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <input type="text" class="input__calc" id="postBCSdigestate" value="100" disabled />
+              <span
+                class="unit__calc blackColor underlined__text"
+                data-bs-toggle="tooltip"
+                title="Percentage"
+                >%</span
+              >
+            </div>
+          </div>
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label class="label__calc" data-bs-toggle="tooltip"
+                >Average annual temperature
+              </label>
+            </div>
+            <div class="combined__calc">
+              <input type="text" class="input__calc" id="avgAnnualTemp" disabled />
+              <span class="unit__calc blackColor">°C</span>
+            </div>
+          </div>
+          <div class="row__calc underlined__text">
+            <div class="flex__box--calc">
+              <label
+                class="label__calc"
+                data-bs-toggle="tooltip"
+                title="Average annual temperatures are derived from the NOAA website on a state by state basis using the evaluation period of 1991 - 2020."
+                >Converted average annual temperature
+              </label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="This value is based on the state the project is located in, then that number is binned based on the Greet Model."
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <input type="text" class="input__calc" id="covAvgAnTemp" disabled />
+              <span class="unit__calc blackColor">°F</span>
+            </div>
+          </div>
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label class="label__calc">Digestate Lagoon Emissions </label>
+            </div>
+            <div class="combined__calc">
+              <input type="text" class="input__calc" id="digestateLagoonEmission" disabled />
+              <span
+                class="unit__calc blackColor underlined__text"
+                data-bs-toggle="tooltip"
+                title="Metric Tons [1000 kg] of methane per year"
+                >MT CH4/Yr</span
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="section__calc section__last">
+        <h2 class="section__heading">CI Score Calculation</h2>
+        <div class="col__calc">
+          <div class="row__calc">
+            <div class="flex__box--calc">
+              <label
+                class="label__calc underlined__text"
+                data-bs-toggle="tooltip"
+                title="The CI Score can be used to determine the revenue of each dekatherm of RNG produced."
+                >CI Score
+              </label>
+              <i
+                class="fa fa-info-circle icon__calc"
+                aria-hidden="true"
+                data-bs-toggle="tooltip"
+                title="This calculated value is based on the amount of RNG energy produced, as well as the types and quantities of energy required to make and transport that RNG to Bakersfield, CA."
+              ></i>
+            </div>
+            <div class="combined__calc">
+              <input type="text" class="input__calc" id="ciScore" disabled />
+              <span
+                class="unit__calc blackColor underlined__text"
+                data-bs-toggle="tooltip"
+                title="Gram of CO2 equivalent per megajoule of RNG"
+                >gCO2e/MJ</span
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <script
+      src="https://unpkg.com/@popperjs/core@2.9.1/dist/umd/popper.min.js"
+      charset="utf-8"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/tw-elements/dist/js/index.min.js"></script>
+    <script src="./DATABASE.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
